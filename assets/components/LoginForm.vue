@@ -9,6 +9,7 @@
     </UFormField>
 
     <UButton type="submit">Login</UButton>
+    <UButton to="/register">Register</UButton>
   </UForm>
 </template>
 
@@ -16,6 +17,7 @@
 import * as v from 'valibot'
 import type {FormSubmitEvent} from '#ui/types';
 import {useSupabaseClient} from '#imports';
+import { useToast } from 'vue-toastification';
 
 const schema = v.object({
   email: v.pipe(v.string(), v.email('Invalid email')),
@@ -31,26 +33,30 @@ const state = reactive({
 
 const supabase = useSupabaseClient();
 const router = useRouter();
+const toast = useToast()
 
 async function submit(event: FormSubmitEvent<any>) {
   const { email, password } = event.data;
 
-  await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
-  router.push('/');
+
+  if (error) {
+    throw error;
+  }
+
+  // Redirect doar dacă login-ul a reușit
+  router.push('/dashboard');
 }
 
-
-
-const toast = useToast()
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   try {
     await submit(event);
-    toast.add({ title: 'Success', description: 'You have been logged in.', color: 'success' });
+    toast.success('You have been logged in.');
   } catch (error) {
-    toast.add({ title: 'Error', description: 'Login failed. Please check your credentials.', color: 'error' });
+    toast.error('Login failed. Please check your credentials.');
     console.error(error);
   }
 }

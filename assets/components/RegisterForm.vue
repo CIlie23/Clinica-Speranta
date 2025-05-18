@@ -24,7 +24,7 @@
 import * as v from 'valibot'
 import type {FormSubmitEvent} from '#ui/types';
 import {useSupabaseClient} from '#imports';
-import Alert from '~/assets/components/Alert.vue';
+import { useToast } from 'vue-toastification'
 
 const schema = v.object({
   prenume: v.pipe(v.string(), v.minLength(2, 'Prenume must be at least 2 characters')),
@@ -55,7 +55,8 @@ async function submit(event: FormSubmitEvent<any>) {
     options: {
       data: {
         prenume,
-        nume
+        nume,
+        role : 'clienti'
       }
     }
   });
@@ -69,12 +70,13 @@ async function submit(event: FormSubmitEvent<any>) {
 }
 
 const toast = useToast()
+
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   try {
     await submit(event);
-    toast.add({ title: 'Success', description: 'Registration successful. Please log in.', color: 'success' });
+    toast.success('Registration successful. Please log in.');
   } catch (error) {
-    toast.add({ title: 'Error', description: 'Registration failed. Please try again.', color: 'error' });
+    toast.error('Registration failed. Please check your credentials.');
     console.error(error);
   }
 }

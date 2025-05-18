@@ -1,6 +1,6 @@
 <template>
   <section>
-    <p>About us</p>
+    <p>Evenimente</p>
   </section>
 </template>
 
