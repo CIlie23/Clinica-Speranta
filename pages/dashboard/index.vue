@@ -1,3 +1,19 @@
+<template>
+  <h1 class="text-4xl">Hello welcome to the home page!</h1>
+  <h1>Rockwell-Bold</h1>
+  <p>Your email address is: {{ user?.email || 'Not logged in'}}</p>
+  <p>Your role is: {{ role || 'No role set' }}</p>
+    <div>
+      <UButton to="/login" label="Button">Login</UButton>
+      <UButton to="/register" color="neutral">Register</UButton>
+      <UButton @click="signOut" color="error">Logout</UButton>
+      <Button @click="showHelloToast(); trackEvent()">Hello</Button>
+      <div class="square" v-if="true"></div>
+      <div class="square" v-if="true"></div>
+      <div class="square" v-if="true"></div>
+    </div>
+</template>
+
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
 import '~/assets/main.css'
@@ -6,14 +22,6 @@ import { useSupabaseUser } from '#imports'
 import { ref } from 'vue'
 
 import { useToast } from 'vue-toastification'
-import Sidebar from 'assets/components/Sidebar.vue';
-import { onMounted } from 'vue'
-
-const { fetchRole } = useRole()
-
-onMounted(async () => {
-  await fetchRole()
-})
 
 const toast = useToast()
 
@@ -46,38 +54,4 @@ function trackEvent() {
 }
 
 const isSidebarOpen = ref(false)
-
-
 </script>
-
-<template class="font-sans">
-  <div class="flex">
-    <!-- Sidebar mobile  -->
-    <UDrawer v-model="isSidebarOpen" :handle="false" direction="left" class="md:hidden">
-      <div class="md:hidden p-2">
-        <UButton color="neutral" variant="subtle" trailing-icon="i-lucide:panel-left-close" />
-       </div>
-      <template #content>
-        <Sidebar />
-      </template>
-    </UDrawer>
-
-    <!-- Sidebar desktop -->
-    <div class="hidden md:flex">
-      <Sidebar />
-    </div>
-    <div class="flex-1 p-6">
-      <NuxtPage />
-    </div>
-  </div>
-</template>
-
-<style>
-@import url("~/assets/main.css");
-
-h1 {
-  font-family: 'Rockwell', sans-serif;
-}
-
-</style>
-

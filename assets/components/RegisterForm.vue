@@ -49,14 +49,14 @@ async function submit(event: FormSubmitEvent<any>) {
   const { prenume, nume, email, password } = event.data;
 
   // Use signUp with metadata for additional fields
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
       data: {
         prenume,
         nume,
-        role : 'clienti'
+        role : 'utilizator'
       }
     }
   });
@@ -65,8 +65,20 @@ async function submit(event: FormSubmitEvent<any>) {
     throw error; // Throw error to be caught in onSubmit
   }
 
+const { error: profileError } = await supabase
+  .from('utilizator')
+  .upsert({
+    id: data.user?.id,
+    email,
+    prenume,
+    nume,
+    role: 'utilizator'
+  });
+
+  if (profileError) throw profileError;
+
   // Redirect to login page after successful registration
-  router.push('/login');
+  router.push('/');
 }
 
 const toast = useToast()
